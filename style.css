@@ -1,0 +1,14 @@
+.task-list {
+  margin-bottom: 10px;
+}
+.task {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.task input[type="text"], .task select {
+  margin-right: 5px;
+}
+.task button {
+  margin-left: 5px;
+}
