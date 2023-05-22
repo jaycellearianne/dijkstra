@@ -1,5 +1,4 @@
 let tasks = [];
-let sortedTasks = [];
 let firstTaskDropdown = document.getElementById("firstTask");
 let endTaskDropdown = document.getElementById("endTask");
 
@@ -85,12 +84,14 @@ function renderTasks(tasks, containerId) {
     let taskDependencyElement = document.createElement("span");
     taskDependencyElement.textContent = task.dependency;
 
+    // edit
     let editButton = document.createElement("button");
     editButton.textContent = "Edit";
     editButton.addEventListener("click", function () {
       editTask(index);
     });
 
+    // delete
     let deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
     deleteButton.addEventListener("click", function () {
@@ -107,6 +108,12 @@ function renderTasks(tasks, containerId) {
   });
 }
 
+
+
+
+// dag graph
+
+// sort
 function sortTasks() {
   let firstTask = firstTaskDropdown.value;
   let endTask = endTaskDropdown.value;
