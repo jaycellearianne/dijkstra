@@ -35,7 +35,7 @@ function updateDependencyDropdown() {
   // Add new options
   const noDependencyOption = document.createElement("option");
   noDependencyOption.value = "";
-  noDependencyOption.textContent = "Depedency";
+  noDependencyOption.textContent = "Dependency";
   taskDependencyDropdown.appendChild(noDependencyOption);
 
   tasks.forEach(function (task) {
