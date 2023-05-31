@@ -1,69 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-       
-        <style>
-          .task-list {
-            margin-bottom: 10px;
-          }
-          .task {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-          }
-          .task input[type="text"], .task select {
-            margin-right: 5px;
-          }
-          .task button {
-            margin-left: 5px;
-          }
-        </style>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Run</title>
+    <link rel="stylesheet" href="style.css">
 
-    <body>
-        <h1>Task Organizer</h1>
-      
-        <h2>Add Task</h2>
-        <!-- task name -->
-        <div class="task">
-            <label for="taskName"></label><input type="text" id="taskName" placeholder="Task Name">
-            <label for="taskDuration"></label><input type="text" id="taskDuration" placeholder="Duration">
-            <!-- adding duration -->
-            <label for="durationUnit"></label><select id="durationUnit">
-                <option value="minutes">Minutes</option>
-                <option value="hours">Hours</option>
-            </select>
-            <!-- adding the task dependency -->
-            <label for="taskDependency"></label><select id="taskDependency">
-                <option value="">Dependency</option>
-            </select>            
-        </div>
 
-        <!-- choose first & last task-->
-        <h2>Task Order</h2>
-        <div>
-            <label for="firstTask">First Task:</label>
-            <select id="firstTask"></select>
-        </div>
-        <div>
-            <label for="endTask">End Task:</label>
-            <select id="endTask"></select>
-        </div>
-        <!-- buttons -->
-        <button onclick="addTask()">Add</button>
-        <button onclick="sortTasks()">Sort Tasks</button>
+</head>
 
-        <!-- task container-->
-        <div id="taskContainer"></div>
+<body>
+<h1>Task Organizer</h1>
 
-        <!-- sorted task will appear here -->
-        <div id="sortedtaskContainer"></div>
-    </body>
+<h2>Add Task</h2>
+<!-- task name -->
+<div class="task">
+    <label for="taskName"></label><input type="text" id="taskName" placeholder="Task Name">
+    <label for="taskDuration"></label><input type="text" id="taskDuration" placeholder="Duration">
+    <!-- adding duration -->
+    <label for="durationUnit"></label><select id="durationUnit">
+    <option value="minutes">Minutes</option>
+    <option value="hours">Hours</option>
+</select>
+    <!-- adding the task dependency -->
+    <label for="taskDependency"></label><select id="taskDependency">
+    <option value="">Dependency</option>
+</select>
+</div>
 
-  
-    <script src="index.js"></script>
+<!-- choose first & last task-->
+<h2>Task Order</h2>
+<div>
+    <label for="firstTask">First Task:</label>
+    <select id="firstTask"></select>
+</div>
+<div>
+    <label for="endTask">End Task:</label>
+    <select id="endTask"></select>
+</div>
+<!-- buttons -->
+<button onclick="addTask()">Add</button>
+<button onclick="sortTasks()">Sort Tasks</button>
+
+<!-- task container-->
+<div id="taskContainer"></div>
+
+<!-- sorted task will appear here -->
+<div id="sortedtaskContainer"></div>
+</body>
+
+
+<script src="index.js"></script>
 </html>
