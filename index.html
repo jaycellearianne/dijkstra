@@ -30,15 +30,15 @@
         <h2>Add Task</h2>
         <!-- task name -->
         <div class="task">
-            <input type="text" id="taskName" placeholder="Task Name">
-            <input type="text" id="taskDuration" placeholder="Duration">
+            <label for="taskName"></label><input type="text" id="taskName" placeholder="Task Name">
+            <label for="taskDuration"></label><input type="text" id="taskDuration" placeholder="Duration">
             <!-- adding duration -->
-            <select id="durationUnit">
+            <label for="durationUnit"></label><select id="durationUnit">
                 <option value="minutes">Minutes</option>
                 <option value="hours">Hours</option>
             </select>
             <!-- adding the task dependency -->
-            <select id="taskDependency">
+            <label for="taskDependency"></label><select id="taskDependency">
                 <option value="">Dependency</option>
             </select>            
         </div>
