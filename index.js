@@ -81,13 +81,13 @@
           taskElement.id = "task_" + task.id;
 
           let taskNameElement = document.createElement("span");
-          taskNameElement.textContent = task.name + ' ' + ":" + ' ';
+          taskNameElement.textContent = task.name;
 
           let taskDurationElement = document.createElement("span");
           taskDurationElement.textContent = task.duration;
 
           let taskDependencyElement = document.createElement("span");
-          taskDependencyElement.textContent =  task.dependency;
+          taskDependencyElement.textContent = task.dependency;
 
           // edit
           let editButton = document.createElement("button");
@@ -179,7 +179,7 @@
       }
 
       // SAVE CHANGES
-      function saveTaskChanges() {
+       function saveTaskChanges() {
         const taskName = document.getElementById("editTaskName").value;
         let taskDuration = document.getElementById("editTaskDuration").value;
         const durationUnit = document.getElementById("editDurationUnit").value;
