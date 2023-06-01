@@ -110,7 +110,22 @@ const tasks = [
         "duration": 48,
         "dependency": "Task 3",
     },
-]
+    {
+        "name": "Task 7",
+        "duration": 12,
+        "dependency": "Task 4",
+    },
+    {
+        "name": "Task 8",
+        "duration": 6,
+        "dependency": "Task 6",
+    },
+    {
+        "name": "Task 9",
+        "duration": 8,
+        "dependency": "Task 6",
+    }
+];
 
 const graph = new Graph();
 
@@ -121,7 +136,7 @@ tasks.forEach((task) => {
 tasks.forEach((task) => {
     if (task.dependency !== "None") {
         const weight = getDuration(task.dependency);
-        graph.addEdge(task.dependency, task.name, weight);
+        graph.addEdge(task.name, task.dependency, weight);
     }
 });
 
@@ -136,11 +151,14 @@ const endTask = "Task 4";
 const { distances, previous } = graph.dijkstra(startTask);
 const shortestPath = graph.getPath(previous, endTask);
 
+console.log(shortestPath)
 console.log("Shortest Path:");
 shortestPath.forEach((task) => {
-    console.log(task);
+    return(task);
 });
 
+
+console.log("Distances:", distances);
 // get the total duration
 let totalDuration = 0;
 shortestPath.forEach((task) => {

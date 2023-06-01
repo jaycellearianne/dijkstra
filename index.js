@@ -1,240 +1,232 @@
 // STORE THE TASKS
 let tasks = [];
 
-
-//sort the tasks
-
-
-// get the input values
-let firstTaskDropdown = document.getElementById("firstTask");
-let endTaskDropdown = document.getElementById("endTask");
-
 // add task function
 function addTask() {
-    const taskName = document.getElementById("taskName").value;
-    const taskDuration = document.getElementById("taskDuration").value;
-    const durationUnit = document.getElementById("durationUnit").value;
-    const taskDependency = document.getElementById("taskDependency").value;
+  const taskName = document.getElementById("taskName").value;
+  const taskDuration = document.getElementById("taskDuration").value;
+  const durationUnit = document.getElementById("durationUnit").value;
+  const taskDependency = document.getElementById("taskDependency").value;
 
-    let task = {
-        name: taskName,
-        duration: taskDuration + " " + durationUnit,
-        dependency: taskDependency,
-    };
+  let task = {
+    name: taskName,
+    duration: taskDuration + " " + durationUnit,
+    dependency: taskDependency,
+  };
 
-    tasks.push(task);
-    updateDependencyDropdown();
-    renderTasks(tasks, "taskContainer");
-
+  tasks.push(task);
+  updateDependencyDropdown();
+  renderTasks(tasks, "taskContainer");
 }
 
 function updateDependencyDropdown() {
-    const taskDependencyDropdown = document.getElementById("taskDependency");
+  const taskDependencyDropdown = document.getElementById("taskDependency");
 
-    const firstTaskDropdown = document.getElementById("firstTask");
-    const endTaskDropdown = document.getElementById("endTask");
+  const firstTaskDropdown = document.getElementById("firstTask");
+  const endTaskDropdown = document.getElementById("endTask");
 
-    // Clear existing options
-    taskDependencyDropdown.innerHTML = "";
-    firstTaskDropdown.innerHTML = "";
-    endTaskDropdown.innerHTML = "";
+  // Clear existing options
+  taskDependencyDropdown.innerHTML = "";
+  firstTaskDropdown.innerHTML = "";
+  endTaskDropdown.innerHTML = "";
 
-    // Add new options
-    const noDependencyOption = document.createElement("option");
-    noDependencyOption.value = "";
-    noDependencyOption.textContent = "Dependency";
-    taskDependencyDropdown.appendChild(noDependencyOption);
+  // Add new options
+  const noDependencyOption = document.createElement("option");
+  noDependencyOption.value = "";
+  noDependencyOption.textContent = "Dependency";
+  taskDependencyDropdown.appendChild(noDependencyOption);
 
-    tasks.forEach(function (task) {
-        let option = document.createElement("option");
-        option.value = task.name;
-        option.textContent = task.name;
+  tasks.forEach(function (task) {
+    let option = document.createElement("option");
+    option.value = task.name;
+    option.textContent = task.name;
 
-        taskDependencyDropdown.appendChild(option);
+    taskDependencyDropdown.appendChild(option);
 
-        let firstTaskOption = document.createElement("option");
-        firstTaskOption.value = task.name;
-        firstTaskOption.textContent = task.name;
+    let firstTaskOption = document.createElement("option");
+    firstTaskOption.value = task.name;
+    firstTaskOption.textContent = task.name;
 
-        firstTaskDropdown.appendChild(firstTaskOption);
+    firstTaskDropdown.appendChild(firstTaskOption);
 
-        let endTaskOption = document.createElement("option");
-        endTaskOption.value = task.name;
-        endTaskOption.textContent = task.name;
+    let endTaskOption = document.createElement("option");
+    endTaskOption.value = task.name;
+    endTaskOption.textContent = task.name;
 
-        endTaskDropdown.appendChild(endTaskOption);
-    });
+    endTaskDropdown.appendChild(endTaskOption);
+  });
 }
 
 // RENDER THE INPUT TASKS IN THE CONTAINER
 function renderTasks(tasks, containerId) {
-    let taskContainer = document.getElementById(containerId);
-    taskContainer.innerHTML = "";
+  let taskContainer = document.getElementById(containerId);
+  taskContainer.innerHTML = "";
 
-    tasks.forEach(function (task) {
-        let taskElement = document.createElement("div");
-        taskElement.classList.add("task");
+  tasks.forEach(function (task) {
+    let taskElement = document.createElement("div");
+    taskElement.classList.add("task");
 
-        let taskNameElement = document.createElement("span");
-        taskNameElement.textContent = task.name;
+    let taskNameElement = document.createElement("span");
+    taskNameElement.textContent = task.name;
 
-        let taskDurationElement = document.createElement("span");
-        taskDurationElement.textContent = task.duration;
+    let taskDurationElement = document.createElement("span");
+    taskDurationElement.textContent = task.duration;
 
-        let taskDependencyElement = document.createElement("span");
-        taskDependencyElement.textContent = task.dependency;
+    let taskDependencyElement = document.createElement("span");
+    taskDependencyElement.textContent = task.dependency;
 
-        // edit
-        let editButton = document.createElement("button");
-        editButton.textContent = "Edit";
-        editButton.addEventListener("click", function () {});
+    // edit
+    let editButton = document.createElement("button");
+    editButton.textContent = "Edit";
+    editButton.addEventListener("click", function () {});
 
-        // delete
-        let deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-        deleteButton.addEventListener("click", function () {});
+    // delete
+    let deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.addEventListener("click", function () {});
 
-        taskElement.appendChild(taskNameElement);
-        taskElement.appendChild(taskDurationElement);
-        taskElement.appendChild(taskDependencyElement);
-        taskElement.appendChild(editButton);
-        taskElement.appendChild(deleteButton);
+    taskElement.appendChild(taskNameElement);
+    taskElement.appendChild(taskDurationElement);
+    taskElement.appendChild(taskDependencyElement);
+    taskElement.appendChild(editButton);
+    taskElement.appendChild(deleteButton);
 
-        taskContainer.appendChild(taskElement);
-    });
+    taskContainer.appendChild(taskElement);
+  });
 }
-
-
-
-
 
 //
 
 // IMPLEMENTING DIJKSTRA
 class PriorityQueue {
-    constructor() {
-        this.elements = [];
-    }
+  constructor() {
+    this.elements = [];
+  }
 
-    enqueue(element, priority) {
-        this.elements.push({ element, priority });
-        this.elements.sort((a, b) => a.priority - b.priority);
-    }
+  enqueue(element, priority) {
+    this.elements.push({ element, priority });
+    this.elements.sort((a, b) => a.priority - b.priority);
+  }
 
-    dequeue() {
-        return this.elements.shift().element;
-    }
+  dequeue() {
+    return this.elements.shift().element;
+  }
 
-    isEmpty() {
-        return this.elements.length === 0;
-    }
+  isEmpty() {
+    return this.elements.length === 0;
+  }
 }
 
 class Graph {
-    constructor() {
-        this.vertices = {};
+  constructor() {
+    this.vertices = {};
+  }
+
+  addVertex(vertex) {
+    this.vertices[vertex] = {};
+  }
+
+  addEdge(source, destination, weight) {
+    this.vertices[source][destination] = weight;
+    this.vertices[destination][source] = weight;
+  }
+
+  dijkstra(startVertex) {
+    const distances = {};
+    const previous = {};
+    const queue = new PriorityQueue();
+
+    for (let vertex in this.vertices) {
+      if (vertex === startVertex) {
+        distances[vertex] = 0;
+        queue.enqueue(vertex, 0);
+      } else {
+        distances[vertex] = Infinity;
+        queue.enqueue(vertex, Infinity);
+      }
+      previous[vertex] = null;
     }
 
-    addVertex(vertex) {
-        this.vertices[vertex] = {};
-    }
+    while (!queue.isEmpty()) {
+      const currentVertex = queue.dequeue();
 
-    addEdge(source, destination, weight) {
-        this.vertices[source][destination] = weight;
-        this.vertices[destination][source] = weight;
-    }
+      for (let neighbor in this.vertices[currentVertex]) {
+        const distance =
+          distances[currentVertex] + this.vertices[currentVertex][neighbor];
 
-    dijkstra(startVertex) {
-        const distances = {};
-        const previous = {};
-        const queue = new PriorityQueue();
-
-        for (let vertex in this.vertices) {
-            if (vertex === startVertex) {
-                distances[vertex] = 0;
-                queue.enqueue(vertex, 0);
-            } else {
-                distances[vertex] = Infinity;
-                queue.enqueue(vertex, Infinity);
-            }
-            previous[vertex] = null;
+        if (distance < distances[neighbor]) {
+          distances[neighbor] = distance;
+          previous[neighbor] = currentVertex;
+          queue.enqueue(neighbor, distance);
         }
-
-        while (!queue.isEmpty()) {
-            const currentVertex = queue.dequeue();
-
-            for (let neighbor in this.vertices[currentVertex]) {
-                const distance =
-                    distances[currentVertex] + this.vertices[currentVertex][neighbor];
-
-                if (distance < distances[neighbor]) {
-                    distances[neighbor] = distance;
-                    previous[neighbor] = currentVertex;
-                    queue.enqueue(neighbor, distance);
-                }
-            }
-        }
-
-        return { distances, previous };
+      }
     }
 
-    getPath(previous, endVertex) {
-        const path = [];
-        let currentVertex = endVertex;
+    return { distances, previous };
+  }
 
-        while (currentVertex !== null) {
-            path.unshift(currentVertex);
-            currentVertex = previous[currentVertex];
-        }
+  getPath(previous, endVertex) {
+    const path = [];
+    let currentVertex = endVertex;
 
-        return path;
+    while (currentVertex !== null) {
+      path.unshift(currentVertex);
+      currentVertex = previous[currentVertex];
     }
+
+    return path;
+  }
 }
 
 // SORT TASKS
 
 function sortTasks() {
-    const graph = new Graph();
 
-    tasks.forEach((task) => {
-        graph.addVertex(task.name);
-    });
+  
+const graph = new Graph();
 
-    tasks.forEach((task) => {
-        if (task.dependency !== "None") {
-            const weight = getDuration(task.dependency);
-            graph.addEdge(task.dependency, task.name, weight);
-        }
-    });
+tasks.forEach((task) => {
+    graph.addVertex(task.name);
+});
 
-    function getDuration(taskName) {
-        const foundTask = tasks.find((task) => task.name === taskName);
-        return foundTask ? foundTask.duration : 0;
+tasks.forEach((task) => {
+    if (task.dependency !== "None") {
+        const weight = getDuration(task.dependency);
+        graph.addEdge(task.name, task.dependency, weight); // check for errors
     }
+});
 
-    const startTask = firstTaskDropdown;
-    const endTask = endTaskDropdown;
 
-    const { distances, previous } = graph.dijkstra(startTask);
-    const shortestPath = graph.getPath(previous, endTask);
+  // DURATION
+  function getDuration(taskName) {
+    const foundTask = tasks.find((task) => task.name === taskName);
+    return foundTask ? foundTask.duration : 0;
+  }
 
-    console.log("Shortest Path:");
-    shortestPath.forEach((task) => {
-        console.log(task);
-    });
+  // get the input values
+  let startTask= document.getElementById("firstTask").value;
+  let endTask = document.getElementById("endTask").value;
 
-    // get the total duration
-    let totalDuration = 0;
-    shortestPath.forEach((task) => {
-        totalDuration += getDuration(task);
-    });
-    console.log("Distances:", distances);
-    console.log("Shortest Path Duration:", totalDuration);
+  const { distances, previous } = graph.dijkstra(startTask);
+  const shortestPath = graph.getPath(previous, endTask);
 
-    const sortedTasks = shortestPath.map((taskName) => {
-        return tasks.find((task) => task.name === taskName);
-    });
-    renderTasks(sortedTasks, "sortedtaskContainer");
+  console.log("Shortest Path:");
+  shortestPath.forEach((task) => {
+    console.log(task);
+  });
+
+  // get the total duration
+  let totalDuration = 0;
+  shortestPath.forEach((task) => {
+    totalDuration += getDuration(task);
+  });
+
+  console.log("Distances:", distances);
+  console.log("Shortest Path Duration:", totalDuration);
+
+  // render on the sortedtasksContainer
+  const sortedTasks = shortestPath.map((taskName) => {
+    return tasks.find((task) => task.name === taskName);
+  });
+  renderTasks(sortedTasks, "sortedtaskContainer");
 }
-
-sortTasks();
