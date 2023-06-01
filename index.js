@@ -23,7 +23,6 @@ function addTask() {
     durationUnit: durationUnit,
     dependency: taskDependency,
   };
-  
 
   tasks.push(task);
   console.log(tasks);
@@ -83,16 +82,14 @@ function renderTasks(tasks, containerId) {
     taskNameElement.textContent = "Task: " + task.name + " ";
     taskNameElement.style.marginRight = "5px";
 
-    
     let taskDurationElement = document.createElement("span");
-    taskDurationElement.textContent = "Duration: " + task.duration + ' ';
+    taskDurationElement.textContent = "Duration: " + task.duration + " ";
     taskDurationElement.style.marginRight = "1px";
 
-    
     let taskDurationUnit = document.createElement("span");
-    taskDurationUnit.textContent = task.durationUnit + ' ';
+    taskDurationUnit.textContent = task.durationUnit + " ";
     taskDurationUnit.style.marginRight = "5px";
-    
+
     let taskDependencyElement = document.createElement("span");
     taskDependencyElement.textContent = "Dependency: " + task.dependency;
     taskDependencyElement.style.marginRight = "5px";
@@ -218,7 +215,6 @@ function deleteTask(taskId) {
 
   renderTasks(tasks, "taskContainer");
 }
-
 
 // CONTEXT MENU FOR EDITING THE TASK
 document.addEventListener("click", function (event) {
