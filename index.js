@@ -2,6 +2,10 @@
       // Place your JavaScript code here
       // STORE THE TASKS
       let tasks = [];
+      
+      
+      let selectedTask = null;
+      let selectedTaskElement = null;
 
       // add task function
       function addTask() {
@@ -74,25 +78,32 @@
         tasks.forEach(function (task) {
           let taskElement = document.createElement("div");
           taskElement.classList.add("task");
+          taskElement.id = "task_" + task.id;
 
           let taskNameElement = document.createElement("span");
-          taskNameElement.textContent = task.name;
+          taskNameElement.textContent = task.name + ' ' + ":" + ' ';
 
           let taskDurationElement = document.createElement("span");
           taskDurationElement.textContent = task.duration;
 
           let taskDependencyElement = document.createElement("span");
-          taskDependencyElement.textContent = task.dependency;
+          taskDependencyElement.textContent =  task.dependency;
 
           // edit
           let editButton = document.createElement("button");
           editButton.textContent = "Edit";
-          editButton.addEventListener("click", function () {});
+          editButton.addEventListener("click", function () {
+            selectedTask = task;
+            selectedTaskElement = taskElement;
+            editTask();
+          });
 
           // delete
           let deleteButton = document.createElement("button");
           deleteButton.textContent = "Delete";
-          deleteButton.addEventListener("click", function () {});
+          deleteButton.addEventListener("click", function () {
+            deleteTask(task.id);
+          });
 
           taskElement.appendChild(taskNameElement);
           taskElement.appendChild(taskDurationElement);
@@ -102,6 +113,116 @@
 
           taskContainer.appendChild(taskElement);
         });
+      }
+      
+      // EDIT TASK
+      function editTask() {
+        const taskContainer = document.getElementById("taskContainer");
+        const taskElement = document.createElement("div");
+        taskElement.classList.add("task");
+
+        const taskNameInput = document.createElement("input");
+        taskNameInput.type = "text";
+        taskNameInput.id = "editTaskName";
+        taskNameInput.placeholder = "Enter task name";
+        taskNameInput.value = selectedTask.name;
+
+        const taskDurationInput = document.createElement("input");
+        taskDurationInput.type = "number";
+        taskDurationInput.id = "editTaskDuration";
+        taskDurationInput.placeholder = "Enter task duration";
+        taskDurationInput.value = selectedTask.duration;
+
+        const durationUnitSelect = document.createElement("select");
+        durationUnitSelect.id = "editDurationUnit";
+        const minutesOption = document.createElement("option");
+        minutesOption.value = "minutes";
+        minutesOption.textContent = "Minutes";
+        const hoursOption = document.createElement("option");
+        hoursOption.value = "hours";
+        hoursOption.textContent = "Hours";
+        durationUnitSelect.appendChild(minutesOption);
+        durationUnitSelect.appendChild(hoursOption);
+        if (selectedTask.durationUnit === "hours") {
+          hoursOption.selected = true;
+        } else {
+          minutesOption.selected = true;
+        }
+
+        const taskDependencySelect = document.createElement("select");
+        taskDependencySelect.id = "editTaskDependency";
+        const noDependencyOption = document.createElement("option");
+        noDependencyOption.value = "";
+        noDependencyOption.textContent = "Dependency";
+        taskDependencySelect.appendChild(noDependencyOption);
+        tasks.forEach(function (task) {
+          let option = document.createElement("option");
+          option.value = task.name;
+          option.textContent = task.name;
+          if (task.name === selectedTask.dependency) {
+            option.selected = true;
+          }
+          taskDependencySelect.appendChild(option);
+        });
+
+        const saveButton = document.createElement("button");
+        saveButton.textContent = "Save";
+        saveButton.addEventListener("click", saveTaskChanges);
+
+        taskElement.appendChild(taskNameInput);
+        taskElement.appendChild(taskDurationInput);
+        taskElement.appendChild(durationUnitSelect);
+        taskElement.appendChild(taskDependencySelect);
+        taskElement.appendChild(saveButton);
+
+        taskContainer.replaceChild(taskElement, selectedTaskElement);
+      }
+
+      // SAVE CHANGES
+      function saveTaskChanges() {
+        const taskName = document.getElementById("editTaskName").value;
+        let taskDuration = document.getElementById("editTaskDuration").value;
+        const durationUnit = document.getElementById("editDurationUnit").value;
+        const taskDependency =
+          document.getElementById("editTaskDependency").value;
+
+        if (durationUnit === "hours") {
+          taskDuration *= 60;
+        }
+
+        selectedTask.name = taskName;
+        selectedTask.duration = taskDuration;
+        selectedTask.durationUnit = durationUnit;
+        selectedTask.dependency = taskDependency;
+
+        updateDependencyDropdown();
+        renderTasks(tasks, "taskContainer");
+      }
+
+      // DELETE TASK
+      function deleteTask(taskId) {
+        tasks = tasks.filter(function (task) {
+          return task.id !== taskId;
+        });
+
+        renderTasks(tasks, "taskContainer");
+      }
+
+
+      // CONTEXT MENU FOR EDITING THE TASK
+      document.addEventListener("click", function (event) {
+        const contextMenu = document.getElementById("contextMenu");
+        if (!contextMenu.contains(event.target)) {
+          contextMenu.style.display = "none";
+        }
+      });
+
+      function showContextMenu(event) {
+        event.preventDefault();
+        const contextMenu = document.getElementById("contextMenu");
+        contextMenu.style.left = event.pageX + "px";
+        contextMenu.style.top = event.pageY + "px";
+        contextMenu.style.display = "block";
       }
 
       // IMPLEMENTING DIJKSTRA
