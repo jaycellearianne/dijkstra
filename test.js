@@ -110,21 +110,6 @@ const tasks = [
         "duration": 48,
         "dependency": "Task 3",
     },
-    {
-        "name": "Task 7",
-        "duration": 12,
-        "dependency": "Task 4",
-    },
-    {
-        "name": "Task 8",
-        "duration": 6,
-        "dependency": "Task 6",
-    },
-    {
-        "name": "Task 9",
-        "duration": 8,
-        "dependency": "Task 6",
-    }
 ];
 
 const graph = new Graph();
@@ -135,15 +120,14 @@ tasks.forEach((task) => {
 
 tasks.forEach((task) => {
     if (task.dependency !== "None") {
-        const weight = getDuration(task.dependency);
-        graph.addEdge(task.name, task.dependency, weight);
+      const source = task.dependency;
+      const destination = task.name;
+      const weight = task.duration;
+      graph.addEdge(source, destination, weight);
     }
-});
+  });
 
-function getDuration(taskName) {
-    const foundTask = tasks.find((task) => task.name === taskName);
-    return foundTask ? foundTask.duration : 0;
-}
+
 
 const startTask = "Task 1";
 const endTask = "Task 4";
@@ -151,17 +135,15 @@ const endTask = "Task 4";
 const { distances, previous } = graph.dijkstra(startTask);
 const shortestPath = graph.getPath(previous, endTask);
 
-console.log(shortestPath)
-console.log("Shortest Path:");
-shortestPath.forEach((task) => {
-    return(task);
-});
+let totalDuration = 0;
+for (let i = 0; i < shortestPath.length - 1; i++) {
+  const source = shortestPath[i];
+  const destination = shortestPath[i + 1];
+  totalDuration += graph.vertices[source][destination];
+}
+
 
 
 console.log("Distances:", distances);
-// get the total duration
-let totalDuration = 0;
-shortestPath.forEach((task) => {
-    totalDuration += getDuration(task);
-});
+console.log("Shortest Paths:", shortestPath)
 console.log("Shortest Path Duration:", totalDuration);
