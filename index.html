@@ -39,10 +39,21 @@
       Total Duration:
       <span id="totalDuration"></span>
     </h3>
+    <!--changes-->
+    <h2>Tasks:</h2>
+    <div id="taskContainer" oncontextmenu="showContextMenu(event)"></div>
+    <!-- Context Menu -->
+    <div id="contextMenu" style="display: none">
+      <ul>
+        <li id="editOption" onclick="editTask()">Edit</li>
+      </ul>
+    </div>
     <script>
       // Place your JavaScript code here
       // STORE THE TASKS
       let tasks = [];
+      let selectedTask = null;
+      let selectedTaskElement = null;
 
       // add task function
       function addTask() {
@@ -56,6 +67,7 @@
         }
 
         let task = {
+          id: generateTaskId(),
           name: taskName,
           duration: taskDuration,
           durationUnit: durationUnit,
@@ -68,6 +80,13 @@
         renderTasks(tasks, "taskContainer");
       }
 
+      // TASK ID
+
+      function generateTaskId() {
+        return Math.random().toString(36).substr(2, 9);
+      }
+
+      // UPDATE DROPDOWN
       function updateDependencyDropdown() {
         const taskDependencyDropdown =
           document.getElementById("taskDependency");
@@ -115,29 +134,39 @@
         tasks.forEach(function (task) {
           let taskElement = document.createElement("div");
           taskElement.classList.add("task");
+          taskElement.id = "task_" + task.id;
+
+          let taskDetails = document.createElement("div");
 
           let taskNameElement = document.createElement("span");
-          taskNameElement.textContent = task.name;
+          taskNameElement.textContent = "Task Name: " + task.name;
 
           let taskDurationElement = document.createElement("span");
-          taskDurationElement.textContent = task.duration;
+          taskDurationElement.textContent = "Duration: " + task.duration;
 
           let taskDependencyElement = document.createElement("span");
-          taskDependencyElement.textContent = task.dependency;
+          taskDependencyElement.textContent = "Dependency: " + task.dependency;
 
           // edit
           let editButton = document.createElement("button");
           editButton.textContent = "Edit";
-          editButton.addEventListener("click", function () {});
+          editButton.addEventListener("click", function () {
+            selectedTask = task;
+            selectedTaskElement = taskElement;
+            editTask();
+          });
 
           // delete
           let deleteButton = document.createElement("button");
           deleteButton.textContent = "Delete";
-          deleteButton.addEventListener("click", function () {});
+          deleteButton.addEventListener("click", function () {
+            deleteTask(task.id);
+          });
 
           taskElement.appendChild(taskNameElement);
           taskElement.appendChild(taskDurationElement);
           taskElement.appendChild(taskDependencyElement);
+          taskElement.appendChild(taskDetails);
           taskElement.appendChild(editButton);
           taskElement.appendChild(deleteButton);
 
@@ -145,6 +174,98 @@
         });
       }
 
+      function deleteTask(taskId) {
+        tasks = tasks.filter(function (task) {
+          return task.id !== taskId;
+        });
+
+        renderTasks(tasks, "taskContainer");
+      }
+
+      document.addEventListener("click", function (event) {
+        const contextMenu = document.getElementById("contextMenu");
+        if (!contextMenu.contains(event.target)) {
+          contextMenu.style.display = "none";
+        }
+      });
+
+      //CONTEXT MENU
+      function showContextMenu(event) {
+        event.preventDefault();
+        const contextMenu = document.getElementById("contextMenu");
+        contextMenu.style.left = event.pageX + "px";
+        contextMenu.style.top = event.pageY + "px";
+        contextMenu.style.display = "block";
+      }
+
+      function editTask() {
+        if (selectedTask && selectedTaskElement) {
+          const taskDetails = selectedTaskElement.querySelector("div");
+          taskDetails.innerHTML = "";
+
+          const taskNameInput = document.createElement("input");
+          taskNameInput.type = "text";
+          taskNameInput.value = selectedTask.name;
+
+          const taskDurationInput = document.createElement("input");
+          taskDurationInput.type = "number";
+          taskDurationInput.value = selectedTask.duration;
+
+          const durationUnitSelect = document.createElement("select");
+          const hoursOption = document.createElement("option");
+          hoursOption.value = "hours";
+          hoursOption.textContent = "Hours";
+          const minutesOption = document.createElement("option");
+          minutesOption.value = "minutes";
+          minutesOption.textContent = "Minutes";
+          durationUnitSelect.appendChild(hoursOption);
+          durationUnitSelect.appendChild(minutesOption);
+          durationUnitSelect.value = selectedTask.durationUnit;
+
+          const taskDependencyInput = document.createElement("input");
+          taskDependencyInput.type = "text";
+          taskDependencyInput.value = selectedTask.dependency;
+
+          const saveButton = document.createElement("button");
+          saveButton.textContent = "Save";
+          saveButton.addEventListener("click", function () {
+            selectedTask.name = taskNameInput.value;
+            selectedTask.duration = taskDurationInput.value;
+            selectedTask.durationUnit = durationUnitSelect.value;
+            selectedTask.dependency = taskDependencyInput.value;
+
+            renderTasks(tasks, "taskContainer");
+          });
+          
+          taskDetails.appendChild(taskNameInput);
+          taskDetails.appendChild(taskDurationInput);
+          taskDetails.appendChild(durationUnitSelect);
+          taskDetails.appendChild(taskDependencyInput);
+          taskDetails.appendChild(saveButton);
+
+          
+        }
+      }
+
+      function saveTaskChanges() {
+        const taskName = document.getElementById("editTaskName").value;
+        let taskDuration = document.getElementById("editTaskDuration").value;
+        const durationUnit = document.getElementById("editDurationUnit").value;
+        const taskDependency =
+          document.getElementById("editTaskDependency").value;
+
+        if (durationUnit === "hours") {
+          taskDuration *= 60;
+        }
+
+        selectedTask.name = taskName;
+        selectedTask.duration = taskDuration;
+        selectedTask.durationUnit = durationUnit;
+        selectedTask.dependency = taskDependency;
+
+        updateDependencyDropdown();
+        renderTasks(tasks, "taskContainer");
+      }
       // IMPLEMENTING DIJKSTRA
       class PriorityQueue {
         constructor() {

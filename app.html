@@ -8,86 +8,76 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <title>Document</title>
     </head>
-
     <body>
         <h1>TaskUp</h1>
-      
         <h2>Add Task:</h2>
-
         <div id="addTaskForm">
-          <form>
-            <div class="task">
-              <input type="text" id="taskName" placeholder="Task Name">
-              <input type="text" id="taskDuration" placeholder="Duration">
-              <!-- adding duration -->
-              <select id="durationUnit">
-                  <option value="minutes">Minutes</option>
-                  <option value="hours">Hours</option>
-              </select>
-              <!-- adding the task dependency -->
-              <select id="taskDependency">
-                  <option value="">Dependency</option>
-              </select>            
-            </div>
-          </form>
-          <button class="button button1" onclick="addTask()">Add</button>
+            <form>
+                <div class="task">
+                    <input type="text" id="taskName" placeholder="Task Name">
+                    <input type="text" id="taskDuration" placeholder="Duration">
+                    <!-- adding duration -->
+                    <select id="durationUnit">
+                        <option value="minutes">Minutes</option>
+                        <option value="hours">Hours</option>
+                    </select>
+                    <!-- adding the task dependency -->
+                    <select id="taskDependency">
+                        <option value="">Dependency</option>
+                    </select>
+                </div>
+            </form>
+            <button class="button button1" onclick="addTask()">Add</button>
         </div>
-
         <h2>Tasks:</h2>
         <div id="addTaskForm">
-          <form>
-            <!-- task container-->
-            <div id="taskContainer">
-              
-            </div>
-
-            <!-- sorted task will appear here -->
-            <div id="sortedtaskContainer"></div>
-          </form>
+            <form>
+                <!-- task container-->
+                <div id="taskContainer"></div>
+                <!-- sorted task will appear here -->
+                <div id="sortedtaskContainer"></div>
+            </form>
         </div>
-
         <!-- choose first & last task-->
         <h2>Task Order</h2>
-        
         <div id="addTaskForm">
-          <form>
-            <div>
-              <label for="firstTask">First Task:</label>
-              <select id="firstTask"></select>
-            </div>
-            <div>
-              <label for="endTask">End Task:</label>
-              <select id="endTask"></select>
-            </div>
-          </form>
-          <button class="button button2" onclick="sortTasks()">Sort Tasks</button>
+            <form>
+                <div>
+                    <label for="firstTask">First Task:</label>
+                    <select id="firstTask"></select>
+                </div>
+                <div>
+                    <label for="endTask">End Task:</label>
+                    <select id="endTask"></select>
+                </div>
+            </form>
+            <button class="button button2" onclick="sortTasks()">Sort Tasks</button>
         </div>
-
         <!--path-->
         <h2>Sorted Tasks:</h2>
-
         <div id="addTaskForm">
-          <form>
-            <div id="sortedTasksContainer"></div>
-          </form>
+            <form>
+                <div id="sortedTasksContainer"></div>
+            </form>
         </div>
-
-        <div>
-
-        </div>
+        <div></div>
         <!-- total duration-->
         <div id="totalTime">
-          <form>
-            <h3>Total Duration:
-                <span id="totalDuration"></span>
-            </h3>
-          </form>
+            <form>
+                <h3>
+                    Total Duration:
+                    <span id="totalDuration"></span>
+                </h3>
+            </form>
         </div>
-
         <div></div>
-
+        <div id="taskContainer" oncontextmenu="showContextMenu(event)"></div>
+        <!-- Context Menu -->
+        <div id="contextMenu" style="display: none">
+            <ul>
+                <li id="editOption" onclick="editTask()">Edit</li>
+            </ul>
+        </div>
     </body>
-
-  
     <script src="index.js"></script>
 </html>
