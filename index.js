@@ -17,11 +17,13 @@ function addTask() {
   }
 
   let task = {
+    id: tasks.length + 1, // Add an ID property
     name: taskName,
     duration: taskDuration,
     durationUnit: durationUnit,
     dependency: taskDependency,
   };
+  
 
   tasks.push(task);
   console.log(tasks);
@@ -216,6 +218,7 @@ function deleteTask(taskId) {
 
   renderTasks(tasks, "taskContainer");
 }
+
 
 // CONTEXT MENU FOR EDITING THE TASK
 document.addEventListener("click", function (event) {
