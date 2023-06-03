@@ -261,92 +261,14 @@
       return { distances, previous };
     }
 
-    getPath(previous, endVertex) {
-      const path = [];
-      let currentVertex = endVertex;
+    
 
-      while (currentVertex !== null) {
-        path.unshift(currentVertex);
-        currentVertex = previous[currentVertex];
-      }
-
-      return path;
-    }
-  }
-
-  // SORT TASKS
-  function updateTotalDuration(duration) {
-    const totalDurationElement = document.getElementById("totalDuration");
-    totalDurationElement.textContent = duration;
-  }
-
-  function sortTasks() {
-    const graph = new Graph();
-
-    tasks.forEach((task) => {
-      graph.addVertex(task.name);
-    });
-
-    tasks.forEach((task) => {
-      if (task.dependency !== "") {
-        const weight = getDuration(task.dependency);
-        graph.addEdge(task.name, task.dependency, weight);
-      }
-    });
-
-    function getDuration(taskName) {
-      const foundTask = tasks.find((task) => task.name === taskName);
-      return foundTask ? parseInt(foundTask.duration) : 0;
-    }
-
-    let startTask = document.getElementById("firstTask").value;
-    let endTask = document.getElementById("endTask").value;
-
-    const { distances, previous } = graph.dijkstra(startTask);
-    const shortestPath = graph.getPath(previous, endTask);
-
-    let totalDuration = 0;
-    shortestPath.forEach((task) => {
-      totalDuration += getDuration(task);
-    });
-
-    console.log("Distances:", distances);
-    renderShortestPath(shortestPath, "sortedTasksContainer");
-    updateTotalDuration(totalDuration);
-
-    // Calculate the sum of edge values
-    let totalEdgeValue = 0;
-    shortestPath.forEach((task, index) => {
-      if (index > 0) {
-        const weight = graph.vertices[task][shortestPath[index - 1]];
-        totalEdgeValue += weight;
-      }
-    });
-    console.log("Total Edge Value:", totalEdgeValue);
-  }
+      
+  
 
 
 
-  // RENDER THE SHORTEST PATH TASKS IN THE CONTAINER
-  function renderShortestPath(shortestPath, containerId) {
-    let sortedTasksContainer = document.getElementById(containerId);
-    sortedTasksContainer.innerHTML = "";
-
-    shortestPath.forEach(function (task) {
-      let taskElement = document.createElement("div");
-      taskElement.classList.add("task");
-
-      let taskNameElement = document.createElement("span");
-      taskNameElement.textContent = task;
-
-      taskElement.appendChild(taskNameElement);
-
-      sortedTasksContainer.appendChild(taskElement);
-
-      // Output the task in the console
-      console.log(task);
-    });
-  }
+  
         </script>
     </body>
 </html>
