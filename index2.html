@@ -226,39 +226,6 @@
       this.vertices[destination][source] = weight;
     }
 
-    dijkstra(startVertex) {
-      const distances = {};
-      const previous = {};
-      const queue = new PriorityQueue();
-
-      for (let vertex in this.vertices) {
-        if (vertex === startVertex) {
-          distances[vertex] = 0;
-          queue.enqueue(vertex, 0);
-        } else {
-          distances[vertex] = Infinity;
-          queue.enqueue(vertex, Infinity);
-        }
-        previous[vertex] = null;
-      }
-
-      while (!queue.isEmpty()) {
-        const currentVertex = queue.dequeue();
-
-        for (let neighbor in this.vertices[currentVertex]) {
-          const distance =
-                  distances[currentVertex] +
-                  this.vertices[currentVertex][neighbor];
-
-          if (distance < distances[neighbor]) {
-            distances[neighbor] = distance;
-            previous[neighbor] = currentVertex;
-            queue.enqueue(neighbor, distance);
-          }
-        }
-      }
-
-      return { distances, previous };
     }
 
     
