@@ -8,19 +8,19 @@ let selectedTaskElement = null;
 function addTask() {
   const taskName = document.getElementById("taskName").value;
   let taskDuration = document.getElementById("taskDuration").value;
-  const durationUnit = document.getElementById("durationUnit").value;
-  const taskDependency = document.getElementById("taskDependency").value;
 
-  if (durationUnit === "hours") {
-    taskDuration *= 60;
-  }
+  const durationUnit = document.getElementById("durationUnit").value;
+  const taskDependencies = document.getElementById("taskDependency").options;
+  const selectedDependencies = Array.from(taskDependencies)
+    .filter((option) => option.selected && option.value !== "")
+    .map((option) => option.value);
 
   let task = {
     id: tasks.length + 1, // Add an ID property
     name: taskName,
     duration: taskDuration,
     durationUnit: durationUnit,
-    dependency: taskDependency,
+    dependency: selectedDependencies,
   };
 
   tasks.push(task);
@@ -47,19 +47,18 @@ function updateDependencyDropdown() {
   taskDependencyDropdown.appendChild(noDependencyOption);
 
   tasks.forEach(function (task) {
-    let option = document.createElement("option");
+    const option = document.createElement("option");
     option.value = task.name;
     option.textContent = task.name;
-
     taskDependencyDropdown.appendChild(option);
 
-    let firstTaskOption = document.createElement("option");
+    const firstTaskOption = document.createElement("option");
     firstTaskOption.value = task.name;
     firstTaskOption.textContent = task.name;
 
     firstTaskDropdown.appendChild(firstTaskOption);
 
-    let endTaskOption = document.createElement("option");
+    const endTaskOption = document.createElement("option");
     endTaskOption.value = task.name;
     endTaskOption.textContent = task.name;
 
@@ -69,35 +68,37 @@ function updateDependencyDropdown() {
 
 // RENDER THE INPUT TASKS IN THE CONTAINER
 function renderTasks(tasks, containerId) {
-  let taskContainer = document.getElementById(containerId);
+  const taskContainer = document.getElementById(containerId);
   taskContainer.innerHTML = "";
 
   tasks.forEach(function (task) {
-    let taskElement = document.createElement("div");
+    const taskElement = document.createElement("div");
     taskElement.classList.add("task");
     taskElement.id = "task_" + task.id;
 
-    let taskNameElement = document.createElement("span");
+    const taskNameElement = document.createElement("span");
     taskNameElement.textContent = "Task: " + task.name + " ";
     taskNameElement.style.marginRight = "5px";
 
-    let taskDurationElement = document.createElement("span");
+    const taskDurationElement = document.createElement("span");
     taskDurationElement.textContent = "Duration: " + task.duration + " ";
     taskDurationElement.style.marginRight = "1px";
 
-    let taskDurationUnit = document.createElement("span");
+    const taskDurationUnit = document.createElement("span");
     taskDurationUnit.textContent = task.durationUnit + " ";
     taskDurationUnit.style.marginRight = "5px";
 
-    let taskDependencyElement = document.createElement("span");
-    taskDependencyElement.textContent = "Dependency: " + task.dependency;
+    const taskDependencyElement = document.createElement("span");
+    taskDependencyElement.textContent =
+      "Dependency: " +
+      (task.dependency.length > 0 ? task.dependency.join(", ") : "None");
     taskDependencyElement.style.marginRight = "5px";
 
-    let spaceElement = document.createElement("span");
+    const spaceElement = document.createElement("span");
     spaceElement.textContent = " ";
 
     // edit
-    let editButton = document.createElement("button");
+    const editButton = document.createElement("button");
     editButton.textContent = "Edit";
     editButton.addEventListener("click", function () {
       selectedTask = task;
@@ -106,7 +107,7 @@ function renderTasks(tasks, containerId) {
     });
 
     // delete
-    let deleteButton = document.createElement("button");
+    const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
     deleteButton.addEventListener("click", function () {
       deleteTask(task.id);
@@ -330,95 +331,96 @@ function sortTasks() {
   tasks.forEach((task) => {
     if (task.dependency !== "") {
       const weight = getDuration(task.dependency);
-    } if (graph.vertices.hasOwnProperty(task.dependency)) {
-        const weight = getDuration(task.dependency);
-        graph.addEdge(task.name, task.dependency, weight);
-      } else {
-        missingDependencies.push(task.dependency);
-      }
     }
-  );
+    if (graph.vertices.hasOwnProperty(task.dependency)) {
+      const weight = getDuration(task.dependency);
+      graph.addEdge(task.name, task.dependency, weight);
+    } else {
+      missingDependencies.push(task.dependency);
+    }
+  });
 
   // missing and deleted dependencies/tasks
   tasks.forEach((task) => {
     if (!graph.vertices.hasOwnProperty(task.name) && task.dependency !== "") {
-        deletedDependencies.push(task.name);
+      deletedDependencies.push(task.name);
     }
-    });
+  });
 
-    if (missingDependencies.length > 0 || deletedDependencies.length > 0) {
-        let errorMessage = 'Tasks cannot be sorted due to problems:\n';
-        if (missingDependencies.length > 0) {
-            errorMessage += `❗Empty dependencies. ${missingDependencies.join(', ')}\n`;
-        }
-        if (deletedDependencies.length > 0) {
-            errorMessage += `❗Deleted tasks: ${deletedDependencies.join(', ')}\n`;
-        }
-        alert(errorMessage);
-        return;
+  if (missingDependencies.length > 0 || deletedDependencies.length > 0) {
+    let errorMessage = "Tasks cannot be sorted due to problems:\n";
+    if (missingDependencies.length > 0) {
+      errorMessage += `❗Empty dependencies. ${missingDependencies.join(
+        ", "
+      )}\n`;
     }
+    if (deletedDependencies.length > 0) {
+      errorMessage += `❗Deleted tasks: ${deletedDependencies.join(", ")}\n`;
     }
-
-  function getDuration(taskName) {
-    const foundTask = tasks.find((task) => task.name === taskName);
-    if (foundTask) {
-      let duration = parseInt(foundTask.duration);
-      if (foundTask.durationUnit === "hours") {
-        duration *= 60;
-      }
-      return duration;
-    }
-    return 0;
+    alert(errorMessage);
+    return;
   }
+}
 
-  const startTaskInput = document.getElementById("firstTask");
-  const endTaskInput = document.getElementById("endTask");
+function getDuration(taskName) {
+  const foundTask = tasks.find((task) => task.name === taskName);
+  if (foundTask) {
+    let duration = parseInt(foundTask.duration);
+    if (foundTask.durationUnit === "hours") {
+      duration *= 60;
+    }
+    return duration;
+  }
+  return 0;
+}
 
-  const sortButton = document.getElementById("sortButton");
+const startTaskInput = document.getElementById("firstTask");
+const endTaskInput = document.getElementById("endTask");
 
-  sortButton.addEventListener("click", () => {
-    const graph = new Graph();
-    tasks.forEach((task) => {
-      graph.addVertex(task.name);
-    });
+const sortButton = document.getElementById("sortButton");
 
-    tasks.forEach((task) => {
-      if (task.dependency !== "") {
-        const weight = getDuration(task.dependency);
-        if (graph.vertices.hasOwnProperty(task.dependency)) {
-          graph.addEdge(task.name, task.dependency, weight);
-        }
+sortButton.addEventListener("click", () => {
+  const graph = new Graph();
+  tasks.forEach((task) => {
+    graph.addVertex(task.name);
+  });
+
+  tasks.forEach((task) => {
+    if (task.dependency !== "") {
+      const weight = getDuration(task.dependency);
+      if (graph.vertices.hasOwnProperty(task.dependency)) {
+        graph.addEdge(task.name, task.dependency, weight);
       }
-    });
+    }
+  });
 
-    let startTask = startTaskInput.value;
-    let endTask = endTaskInput.value;
+  let startTask = startTaskInput.value;
+  let endTask = endTaskInput.value;
 
-    const { distances, previous } = graph.dijkstra(startTask);
-    const shortestPath = graph.getPath(previous, endTask);
+  const { distances, previous } = graph.dijkstra(startTask);
+  const shortestPath = graph.getPath(previous, endTask);
 
-    console.log("Shortest Path:", shortestPath);
+  console.log("Shortest Path:", shortestPath);
 
-    let totalDuration = 0;
-    shortestPath.forEach((task) => {
-      totalDuration += getDuration(task);
-    });
+  let totalDuration = 0;
+  shortestPath.forEach((task) => {
+    totalDuration += getDuration(task);
+  });
 
-    console.log("Distances:", distances);
-    renderShortestPath(shortestPath, "sortedTasksContainer");
-    updateTotalDuration(totalDuration);
+  console.log("Distances:", distances);
+  renderShortestPath(shortestPath, "sortedTasksContainer");
+  updateTotalDuration(totalDuration);
 
-    // Calculate the sum of edge values
-    let totalEdgeValue = 0;
-    shortestPath.forEach((task, index) => {
-      if (index > 0) {
-        const weight = graph.vertices[task][shortestPath[index - 1]];
-        totalEdgeValue += weight;
-      }
-    });
-    console.log("Total Edge Value:", totalEdgeValue);
-    });
-
+  // Calculate the sum of edge values
+  let totalEdgeValue = 0;
+  shortestPath.forEach((task, index) => {
+    if (index > 0) {
+      const weight = graph.vertices[task][shortestPath[index - 1]];
+      totalEdgeValue += weight;
+    }
+  });
+  console.log("Total Edge Value:", totalEdgeValue);
+});
 
 // RENDER THE SHORTEST PATH TASKS IN THE CONTAINER
 function renderShortestPath(shortestPath, containerId) {
