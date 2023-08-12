@@ -1,4 +1,3 @@
-// Place your JavaScript code here
 // STORE THE TASKS
 let tasks = [];
 
@@ -321,6 +320,8 @@ function updateTotalDuration(duration) {
 
 function sortTasks() {
   const graph = new Graph();
+  const missingDependencies = [];
+  const deletedDependencies = [];
 
   tasks.forEach((task) => {
     graph.addVertex(task.name);
@@ -329,9 +330,34 @@ function sortTasks() {
   tasks.forEach((task) => {
     if (task.dependency !== "") {
       const weight = getDuration(task.dependency);
-      graph.addEdge(task.name, task.dependency, weight);
+    } if (graph.vertices.hasOwnProperty(task.dependency)) {
+        const weight = getDuration(task.dependency);
+        graph.addEdge(task.name, task.dependency, weight);
+      } else {
+        missingDependencies.push(task.dependency);
+      }
     }
-  });
+  );
+
+  // missing and deleted dependencies/tasks
+  tasks.forEach((task) => {
+    if (!graph.vertices.hasOwnProperty(task.name) && task.dependency !== "") {
+        deletedDependencies.push(task.name);
+    }
+    });
+
+    if (missingDependencies.length > 0 || deletedDependencies.length > 0) {
+        let errorMessage = 'Tasks cannot be sorted due to problems:\n';
+        if (missingDependencies.length > 0) {
+            errorMessage += `❗Empty dependencies. ${missingDependencies.join(', ')}\n`;
+        }
+        if (deletedDependencies.length > 0) {
+            errorMessage += `❗Deleted tasks: ${deletedDependencies.join(', ')}\n`;
+        }
+        alert(errorMessage);
+        return;
+    }
+    }
 
   function getDuration(taskName) {
     const foundTask = tasks.find((task) => task.name === taskName);
@@ -345,31 +371,54 @@ function sortTasks() {
     return 0;
   }
 
-  let startTask = document.getElementById("firstTask").value;
-  let endTask = document.getElementById("endTask").value;
+  const startTaskInput = document.getElementById("firstTask");
+  const endTaskInput = document.getElementById("endTask");
 
-  const { distances, previous } = graph.dijkstra(startTask);
-  const shortestPath = graph.getPath(previous, endTask);
+  const sortButton = document.getElementById("sortButton");
 
-  let totalDuration = 0;
-  shortestPath.forEach((task) => {
-    totalDuration += getDuration(task);
-  });
+  sortButton.addEventListener("click", () => {
+    const graph = new Graph();
+    tasks.forEach((task) => {
+      graph.addVertex(task.name);
+    });
 
-  console.log("Distances:", distances);
-  renderShortestPath(shortestPath, "sortedTasksContainer");
-  updateTotalDuration(totalDuration);
+    tasks.forEach((task) => {
+      if (task.dependency !== "") {
+        const weight = getDuration(task.dependency);
+        if (graph.vertices.hasOwnProperty(task.dependency)) {
+          graph.addEdge(task.name, task.dependency, weight);
+        }
+      }
+    });
 
-  // Calculate the sum of edge values
-  let totalEdgeValue = 0;
-  shortestPath.forEach((task, index) => {
-    if (index > 0) {
-      const weight = graph.vertices[task][shortestPath[index - 1]];
-      totalEdgeValue += weight;
-    }
-  });
-  console.log("Total Edge Value:", totalEdgeValue);
-}
+    let startTask = startTaskInput.value;
+    let endTask = endTaskInput.value;
+
+    const { distances, previous } = graph.dijkstra(startTask);
+    const shortestPath = graph.getPath(previous, endTask);
+
+    console.log("Shortest Path:", shortestPath);
+
+    let totalDuration = 0;
+    shortestPath.forEach((task) => {
+      totalDuration += getDuration(task);
+    });
+
+    console.log("Distances:", distances);
+    renderShortestPath(shortestPath, "sortedTasksContainer");
+    updateTotalDuration(totalDuration);
+
+    // Calculate the sum of edge values
+    let totalEdgeValue = 0;
+    shortestPath.forEach((task, index) => {
+      if (index > 0) {
+        const weight = graph.vertices[task][shortestPath[index - 1]];
+        totalEdgeValue += weight;
+      }
+    });
+    console.log("Total Edge Value:", totalEdgeValue);
+    });
+
 
 // RENDER THE SHORTEST PATH TASKS IN THE CONTAINER
 function renderShortestPath(shortestPath, containerId) {

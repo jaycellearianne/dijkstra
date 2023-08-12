@@ -511,7 +511,7 @@
         }
 
         const task = tasks[taskName];
-        const dependencies = task.dependencies.map(dep => dep + ' (' + tasks[dep].duration + ' days)').join(', ');
+        const dependencies = task.dependencies.map(dep => dep + ' (' + tasks[dep].duration + ' minutes)').join(', ');
 
         return {
             taskName,
