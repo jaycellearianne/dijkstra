@@ -10,14 +10,14 @@
         <title>TaskUp</title>
         <style>
           body {
-            font-family: 'Oswald', sans-serif;
-            padding: 5%;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url(mainbg.jpg);
-            height: 100vh;
-            -webkit-background-size: cover;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+          font-family: 'Oswald', sans-serif;
+          padding: 5%;
+          background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url(mainbg.jpg);
+          height: 100vh;
+          -webkit-background-size: cover;
+          background-size: cover;
+          background-position: center;
+          background-attachment: fixed;
           }
           h1 {
             color: yellow;
@@ -49,6 +49,73 @@
             margin: 4px 2px;
             transition-duration: 0.4s;
             cursor: pointer;
+          }
+
+          .button1 {
+            background-color: white; 
+            color: black; 
+            border: 2px solid #4CAF50;
+          }
+
+          .button1:hover {
+            background-color: #4CAF50;
+            color: white;
+          }
+
+          .button2 {
+            background-color: white; 
+            color: black; 
+            border: 2px solid #008CBA;
+          }
+
+          .button2:hover {
+            background-color: #008CBA;
+            color: white;
+          }
+
+          #addTaskForm {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+          }
+          .task-list {
+            margin-bottom: 10px;
+          }
+          .task {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+          }
+          .task input[type="text"], .task select {
+            margin-right: 5px;
+          }
+          .task button {
+            margin-left: 5px;
+          }
+          #taskInfo {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+          }
+
+          #taskInfo td, #taskInfo th {
+            border: 1px solid #ddd;
+            padding: 8px;
+          }
+
+          #customers th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #fffd9f;
+            color: black;
+          }
+          #totalTime {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 15px;
+            margin-top: 30px;
+            font-size: 30px;
           }
         </style>
     </head>
@@ -130,7 +197,8 @@
         <div></div>
 
         <script>
-  // Place your JavaScript code here
+  
+  
       // STORE THE TASKS
       let tasks = [];
       let selectedTask = null;
@@ -437,6 +505,19 @@
 
       function sortTasks() {
         const graph = new Graph();
+
+        if (!tasks.hasOwnProperty(taskName)) {
+        return 'The Task has been deleted.';
+        }
+
+        const task = tasks[taskName];
+        const dependencies = task.dependencies.map(dep => dep + ' (' + tasks[dep].duration + ' days)').join(', ');
+
+        return {
+            taskName,
+            duration: task.duration,
+            dependencies
+        };
 
         tasks.forEach((task) => {
           graph.addVertex(task.name);
