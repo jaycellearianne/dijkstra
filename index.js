@@ -315,7 +315,7 @@ class Graph {
 // SORT TASKS
 function updateTotalDuration(duration) {
   const totalDurationElement = document.getElementById("totalDuration");
-  totalDurationElement.textContent = duration;
+  totalDurationElement.textContent = duration + " minutes";
 }
 
 function sortTasks() {
