@@ -143,11 +143,13 @@ function editTask() {
   taskDurationInput.value = selectedTask.duration;
 
   const durationUnitSelect = document.createElement("select");
-  durationUnitSelect.id = "editDurationUnit";
+  durationUnitSelect.id = "editDurationUnit";  
   const minutesOption = document.createElement("option");
+
   minutesOption.value = "minutes";
   minutesOption.textContent = "Minutes";
   const hoursOption = document.createElement("option");
+
   hoursOption.value = "hours";
   hoursOption.textContent = "Hours";
   durationUnitSelect.appendChild(minutesOption);
@@ -160,15 +162,28 @@ function editTask() {
 
   const taskDependencySelect = document.createElement("select");
   taskDependencySelect.id = "editTaskDependency";
+  taskDependencySelect.multiple = true; 
+  
+  tasks.forEach(task => {
+    const option = document.createElement("option");
+    option.value = task.name;
+    option.textContent = task.name;
+    if (selectedTask.dependency.includes(task.name)) {
+      option.selected = true;
+    }
+    taskDependencySelect.appendChild(option);
+  });
+
   const noDependencyOption = document.createElement("option");
   noDependencyOption.value = "";
   noDependencyOption.textContent = "Dependency";
   taskDependencySelect.appendChild(noDependencyOption);
+
   tasks.forEach(function (task) {
     let option = document.createElement("option");
     option.value = task.name;
     option.textContent = task.name;
-    if (task.name === selectedTask.dependency) {
+    if (selectedTask.dependency.includes(task.name)) {
       option.selected = true;
     }
     taskDependencySelect.appendChild(option);
