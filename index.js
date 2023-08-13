@@ -331,12 +331,10 @@ class Graph {
 }
 
 // SORT TASKS
-function updateTotalDuration(duration) {
-  const totalDurationElement = document.getElementById("totalDuration");
-  totalDurationElement.textContent = duration;
-}
-
 function sortTasks() {
+  const startTask = document.getElementById("firstTask").value;
+  const endTask = document.getElementById("endTask").value;
+
   const graph = new Graph();
   const missingDependencies = [];
   const deletedDependencies = [];
@@ -346,16 +344,48 @@ function sortTasks() {
   });
 
   tasks.forEach((task) => {
-    if (task.dependency !== "") {
-      const weight = getDuration(task.dependency);
-    }
-    if (graph.vertices.hasOwnProperty(task.dependency)) {
-      const weight = getDuration(task.dependency);
-      graph.addEdge(task.name, task.dependency, weight);
-    } else {
-      missingDependencies.push(task.dependency);
+    if (task.dependency.length > 0) {
+      task.dependency.forEach((dependency) => {
+        const weight = getDuration(dependency);
+        graph.addEdge(task.name, dependency, weight);
+      });
     }
   });
+
+  if (startTask && endTask) {
+    const { distances, previous } = graph.dijkstra(startTask);
+    const shortestPath = graph.getPath(previous, endTask);
+    const totalDuration = distances[endTask];
+
+    renderShortestPath(shortestPath, "sortedTasksContainer");
+    updateTotalDuration(totalDuration);
+
+    let totalEdgeValue = 0;
+    shortestPath.forEach((task, index) => {
+      if (index > 0) {
+        const weight = graph.vertices[task][shortestPath[index - 1]];
+        totalEdgeValue += weight;
+      }
+    });
+    console.log("Total Edge Value:", totalEdgeValue);
+  }
+
+  function getDuration(taskName) {
+    const foundTask = tasks.find((task) => task.name === taskName);
+    if (foundTask) {
+      let duration = parseInt(foundTask.duration);
+      if (foundTask.durationUnit === "hours") {
+        duration *= 60;
+      }
+      return duration;
+    }
+    return 0;
+  }
+
+  function updateTotalDuration(duration) {
+    const totalDurationElement = document.getElementById("totalDuration");
+    totalDurationElement.textContent = duration;
+  }
 
   // missing and deleted dependencies/tasks
   tasks.forEach((task) => {
@@ -378,66 +408,6 @@ function sortTasks() {
     return;
   }
 }
-
-function getDuration(taskName) {
-  const foundTask = tasks.find((task) => task.name === taskName);
-  if (foundTask) {
-    let duration = parseInt(foundTask.duration);
-    if (foundTask.durationUnit === "hours") {
-      duration *= 60;
-    }
-    return duration;
-  }
-  return 0;
-}
-
-const startTaskInput = document.getElementById("firstTask");
-const endTaskInput = document.getElementById("endTask");
-
-const sortButton = document.getElementById("sortButton");
-
-sortButton.addEventListener("click", () => {
-  const graph = new Graph();
-  tasks.forEach((task) => {
-    graph.addVertex(task.name);
-  });
-
-  tasks.forEach((task) => {
-    if (task.dependency !== "") {
-      const weight = getDuration(task.dependency);
-      if (graph.vertices.hasOwnProperty(task.dependency)) {
-        graph.addEdge(task.name, task.dependency, weight);
-      }
-    }
-  });
-
-  let startTask = startTaskInput.value;
-  let endTask = endTaskInput.value;
-
-  const { distances, previous } = graph.dijkstra(startTask);
-  const shortestPath = graph.getPath(previous, endTask);
-
-  console.log("Shortest Path:", shortestPath);
-
-  let totalDuration = 0;
-  shortestPath.forEach((task) => {
-    totalDuration += getDuration(task);
-  });
-
-  console.log("Distances:", distances);
-  renderShortestPath(shortestPath, "sortedTasksContainer");
-  updateTotalDuration(totalDuration);
-
-  // Calculate the sum of edge values
-  let totalEdgeValue = 0;
-  shortestPath.forEach((task, index) => {
-    if (index > 0) {
-      const weight = graph.vertices[task][shortestPath[index - 1]];
-      totalEdgeValue += weight;
-    }
-  });
-  console.log("Total Edge Value:", totalEdgeValue);
-});
 
 // RENDER THE SHORTEST PATH TASKS IN THE CONTAINER
 function renderShortestPath(shortestPath, containerId) {
