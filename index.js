@@ -143,7 +143,7 @@ function editTask() {
   taskDurationInput.value = selectedTask.duration;
 
   const durationUnitSelect = document.createElement("select");
-  durationUnitSelect.id = "editDurationUnit";  
+  durationUnitSelect.id = "editDurationUnit";
   const minutesOption = document.createElement("option");
 
   minutesOption.value = "minutes";
@@ -162,9 +162,9 @@ function editTask() {
 
   const taskDependencySelect = document.createElement("select");
   taskDependencySelect.id = "editTaskDependency";
-  taskDependencySelect.multiple = true; 
-  
-  tasks.forEach(task => {
+  taskDependencySelect.multiple = true;
+
+  tasks.forEach((task) => {
     const option = document.createElement("option");
     option.value = task.name;
     option.textContent = task.name;
@@ -205,14 +205,16 @@ function editTask() {
 // SAVE CHANGES
 function saveTaskChanges() {
   const taskName = document.getElementById("editTaskName").value;
-  let taskDuration = document.getElementById("editTaskDuration").value;
+  const taskDuration = document.getElementById("editTaskDuration").value;
   const durationUnit = document.getElementById("editDurationUnit").value;
-  const taskDependency = document.getElementById("editTaskDependency").value;
 
-  if (durationUnit === "hours") {
-    taskDuration *= 60;
-  }
+  const selectedDependencies = Array.from(
+    document.getElementById("editTaskDependency").options
+  )
+    .filter((option) => option.selected && option.value !== "")
+    .map((option) => option.value);
 
+  selectedTask.dependency = selectedDependencies;
   selectedTask.name = taskName;
   selectedTask.duration = taskDuration;
   selectedTask.durationUnit = durationUnit;
