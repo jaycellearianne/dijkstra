@@ -8,14 +8,25 @@ body {
   background-position: center;
   background-attachment: fixed;
 }
+
 h1 {
   color: yellow;
   text-align: center;
   background-color: black;
 }
+
 h2 {
   color: white;
 }
+
+input[type=text] {
+  background-color: rgba(169, 169, 169, 0.742);
+}
+
+input[type=text]:focus {
+  background-color: white;
+}
+
 input[type=text], select {
   width: 100%;
   padding: 12px 20px;
@@ -24,6 +35,11 @@ input[type=text], select {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  background-color: rgba(169, 169, 169, 0.742);
+}
+
+select:focus {
+  background-color: white;
 }
 
 .button {
