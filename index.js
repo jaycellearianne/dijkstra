@@ -29,6 +29,7 @@ function addTask() {
   renderTasks(tasks, "taskContainer");
 }
 
+// dependency dropdown
 function updateDependencyDropdown() {
   const taskDependencyDropdown = document.getElementById("taskDependency");
 
@@ -51,7 +52,7 @@ function updateDependencyDropdown() {
     option.value = task.name;
     option.textContent = task.name;
     taskDependencyDropdown.appendChild(option);
-
+    
     const firstTaskOption = document.createElement("option");
     firstTaskOption.value = task.name;
     firstTaskOption.textContent = task.name;
@@ -81,8 +82,8 @@ function renderTasks(tasks, containerId) {
     taskNameElement.style.marginRight = "5px";
 
     const taskDurationElement = document.createElement("span");
-    taskDurationElement.textContent = "Duration: " + task.duration + " ";
-    taskDurationElement.style.marginRight = "1px";
+    taskDurationElement.textContent = "Duration: " + task.duration;
+    taskDurationElement.style.marginRight = "5px";
 
     const taskDurationUnit = document.createElement("span");
     taskDurationUnit.textContent = task.durationUnit + " ";
@@ -176,13 +177,13 @@ function editTask() {
 
   const noDependencyOption = document.createElement("option");
   noDependencyOption.value = "";
-  noDependencyOption.textContent = "Dependency";
+  noDependencyOption.textContent = "";
   taskDependencySelect.appendChild(noDependencyOption);
 
   tasks.forEach(function (task) {
     let option = document.createElement("option");
     option.value = task.name;
-    option.textContent = task.name;
+    option.textContent = "";
     if (selectedTask.dependency.includes(task.name)) {
       option.selected = true;
     }
@@ -215,10 +216,11 @@ function saveTaskChanges() {
     .map((option) => option.value);
 
   selectedTask.dependency = selectedDependencies;
+
   selectedTask.name = taskName;
   selectedTask.duration = taskDuration;
   selectedTask.durationUnit = durationUnit;
-  selectedTask.dependency = taskDependency;
+  selectedTask.dependency = selectedDependencies;
 
   updateDependencyDropdown();
   renderTasks(tasks, "taskContainer");
@@ -381,6 +383,9 @@ function sortTasks() {
     }
     return 0;
   }
+
+  renderShortestPath(shortestPath, "sortedTasksContainer");
+  updateTotalDuration(totalDuration);
 
   function updateTotalDuration(duration) {
     const totalDurationElement = document.getElementById("totalDuration");
