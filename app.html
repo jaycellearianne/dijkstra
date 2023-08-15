@@ -6,8 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="style.css">
-        <link rel="shortcut icon" href="logo.png"/>
-        <title>TaskUp</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+        <title>Document</title>
     </head>
     <body>
         <h1>TaskUp</h1>
@@ -23,7 +25,8 @@
                         <option value="hours">Hours</option>
                     </select>
                     <!-- adding the task dependency -->
-                    <select id="taskDependency" multiple>
+                    <select id="taskDependency" multiple="multiple">
+                        
                     </select>
                 </div>
             </form>
@@ -51,7 +54,7 @@
                     <select id="endTask"></select>
                 </div>
             </form>
-            <button id="sortButton" class="button button2" onclick="sortTasks()">Sort Tasks</button>
+            <button class="button button2" onclick="sortTasks()">Sort Tasks</button>
         </div>
         <!--path-->
         <h2>Sorted Tasks:</h2>
@@ -73,7 +76,7 @@
         <div></div>
         <div id="taskContainer" oncontextmenu="showContextMenu(event)"></div>
         <!-- Context Menu -->
-        <div id="contextMenu" style="display: none">
+        <div id="contextMenu" style="display: none;">
             <ul>
                 <li id="editOption" onclick="editTask()">Edit</li>
             </ul>

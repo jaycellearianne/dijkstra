@@ -8,12 +8,11 @@ let selectedTaskElement = null;
 function addTask() {
   const taskName = document.getElementById("taskName").value;
   let taskDuration = document.getElementById("taskDuration").value;
-
   const durationUnit = document.getElementById("durationUnit").value;
-  const taskDependencies = document.getElementById("taskDependency").options;
-  const selectedDependencies = Array.from(taskDependencies)
-    .filter((option) => option.selected && option.value !== "")
-    .map((option) => option.value);
+  
+  const taskDependencyDropdown = $("#taskDependency");
+  const selectedDependencies = taskDependencyDropdown.val();
+
 
   let task = {
     id: tasks.length + 1, // Add an ID property
@@ -26,44 +25,58 @@ function addTask() {
   tasks.push(task);
   console.log(tasks);
   updateDependencyDropdown();
+  first();
+  end();
   renderTasks(tasks, "taskContainer");
 }
 
-// dependency dropdown
-function updateDependencyDropdown() {
-  const taskDependencyDropdown = document.getElementById("taskDependency");
-
+// first task dropdown
+function first() {
   const firstTaskDropdown = document.getElementById("firstTask");
-  const endTaskDropdown = document.getElementById("endTask");
-
-  // Clear existing options
-  taskDependencyDropdown.innerHTML = "";
   firstTaskDropdown.innerHTML = "";
-  endTaskDropdown.innerHTML = "";
-
-  // Add new options
-  const noDependencyOption = document.createElement("option");
-  noDependencyOption.value = "";
-  noDependencyOption.textContent = "Dependency";
-  taskDependencyDropdown.appendChild(noDependencyOption);
 
   tasks.forEach(function (task) {
-    const option = document.createElement("option");
-    option.value = task.name;
-    option.textContent = task.name;
-    taskDependencyDropdown.appendChild(option);
-    
     const firstTaskOption = document.createElement("option");
     firstTaskOption.value = task.name;
     firstTaskOption.textContent = task.name;
 
     firstTaskDropdown.appendChild(firstTaskOption);
+  });
+}
 
+// end task dropdown
+function end() {
+  const endTaskDropdown = document.getElementById("endTask");
+  endTaskDropdown.innerHTML = "";
+
+  tasks.forEach(function (task) {
     const endTaskOption = document.createElement("option");
     endTaskOption.value = task.name;
     endTaskOption.textContent = task.name;
 
     endTaskDropdown.appendChild(endTaskOption);
+  });
+}
+
+
+// dependency dropdown
+function updateDependencyDropdown() {
+  const taskDependencyDropdown = $("#taskDependency");
+
+  // Clear existing options
+  taskDependencyDropdown.empty();
+  
+  tasks.forEach(function (task) {
+    const availableDependencies = tasks.filter(depTask => depTask.id !== task.id);
+
+    const option = new Option(task.name, task.name);
+    taskDependencyDropdown.append(option);
+  });
+
+  // Initialize Select2 with multi-select and other options
+  taskDependencyDropdown.select2({
+    placeholder: "Select dependencies",
+    multiple: true,
   });
 }
 
@@ -116,7 +129,7 @@ function renderTasks(tasks, containerId) {
 
     taskElement.appendChild(taskNameElement);
     taskElement.appendChild(taskDurationElement);
-    taskElement.appendChild(taskDurationUnit); // Add duration unit element
+    taskElement.appendChild(taskDurationUnit); 
     taskElement.appendChild(taskDependencyElement);
     taskElement.appendChild(editButton);
     taskElement.appendChild(deleteButton);
@@ -166,30 +179,23 @@ function editTask() {
   taskDependencySelect.multiple = true;
 
   tasks.forEach((task) => {
-    const option = document.createElement("option");
-    option.value = task.name;
-    option.textContent = task.name;
-    if (selectedTask.dependency.includes(task.name)) {
-      option.selected = true;
+    if (task.id !== selectedTask.id) { // Check if task is not the current task being edited
+      const option = document.createElement("option");
+      option.value = task.name;
+      option.textContent = task.name;
+      if (selectedTask.dependency.includes(task.name)) {
+        option.selected = true;
+      }
+      taskDependencySelect.appendChild(option);
     }
-    taskDependencySelect.appendChild(option);
-  });
+  }); 
 
   const noDependencyOption = document.createElement("option");
   noDependencyOption.value = "";
   noDependencyOption.textContent = "";
   taskDependencySelect.appendChild(noDependencyOption);
 
-  tasks.forEach(function (task) {
-    let option = document.createElement("option");
-    option.value = task.name;
-    option.textContent = "";
-    if (selectedTask.dependency.includes(task.name)) {
-      option.selected = true;
-    }
-    taskDependencySelect.appendChild(option);
-  });
-
+// save button
   const saveButton = document.createElement("button");
   saveButton.textContent = "Save";
   saveButton.addEventListener("click", saveTaskChanges);
@@ -199,6 +205,11 @@ function editTask() {
   taskElement.appendChild(durationUnitSelect);
   taskElement.appendChild(taskDependencySelect);
   taskElement.appendChild(saveButton);
+
+  $(taskDependencySelect).select2({
+    placeholder: "Select dependencies",
+    multiple: true
+  });
 
   taskContainer.replaceChild(taskElement, selectedTaskElement);
 }
