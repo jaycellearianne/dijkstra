@@ -389,7 +389,7 @@ function sortTasks() {
 
   function updateTotalDuration(duration) {
     const totalDurationElement = document.getElementById("totalDuration");
-    totalDurationElement.textContent = duration;
+    totalDurationElement.textContent = duration + " " + "minutes";
   }
 
   // missing and deleted dependencies/tasks
