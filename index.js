@@ -8,11 +8,20 @@ let selectedTaskElement = null;
 function addTask() {
   const taskName = document.getElementById("taskName").value;
   let taskDuration = document.getElementById("taskDuration").value;
+
+  if (
+    taskName.trim() === "" ||
+    taskDuration === "" ||
+    parseInt(taskDuration) <= 0
+  ) {
+    alert("Please enter valid task name and duration.");
+    return;
+  }
+
   const durationUnit = document.getElementById("durationUnit").value;
-  
+
   const taskDependencyDropdown = $("#taskDependency");
   const selectedDependencies = taskDependencyDropdown.val();
-
 
   let task = {
     id: tasks.length + 1, // Add an ID property
@@ -22,6 +31,9 @@ function addTask() {
     dependency: selectedDependencies,
   };
 
+  selectedTask = task;
+
+  event.preventDefault();
   tasks.push(task);
   console.log(tasks);
   updateDependencyDropdown();
@@ -58,14 +70,13 @@ function end() {
   });
 }
 
-
 // dependency dropdown
 function updateDependencyDropdown() {
   const taskDependencyDropdown = $("#taskDependency");
 
   // Clear existing options
   taskDependencyDropdown.empty();
-  
+
   tasks.forEach(function (task) {
     const option = new Option(task.name, task.name);
     if (selectedTask && task.name === selectedTask.name) {
@@ -111,6 +122,11 @@ function renderTasks(tasks, containerId) {
     const spaceElement = document.createElement("span");
     spaceElement.textContent = " ";
 
+    const errorMessage = document.createElement("div");
+    errorMessage.id = "durationErrorMessage_" + task.id;
+    errorMessage.style.color = "red";
+    errorMessage.style.display = "none";
+
     // edit
     const editButton = document.createElement("button");
     editButton.textContent = "Edit";
@@ -129,10 +145,11 @@ function renderTasks(tasks, containerId) {
 
     taskElement.appendChild(taskNameElement);
     taskElement.appendChild(taskDurationElement);
-    taskElement.appendChild(taskDurationUnit); 
+    taskElement.appendChild(taskDurationUnit);
     taskElement.appendChild(taskDependencyElement);
     taskElement.appendChild(editButton);
     taskElement.appendChild(deleteButton);
+    taskContainer.appendChild(taskElement);
 
     taskContainer.appendChild(taskElement);
   });
@@ -155,6 +172,12 @@ function editTask() {
   taskDurationInput.id = "editTaskDuration";
   taskDurationInput.placeholder = "Enter task duration";
   taskDurationInput.value = selectedTask.duration;
+  taskDurationInput.min = "0";
+
+  const errorMessage = document.createElement("div");
+  errorMessage.id = "durationErrorMessage";
+  errorMessage.style.color = "red";
+  errorMessage.style.display = "none";
 
   const durationUnitSelect = document.createElement("select");
   durationUnitSelect.id = "editDurationUnit";
@@ -179,7 +202,7 @@ function editTask() {
   taskDependencySelect.multiple = true;
 
   tasks.forEach((task) => {
-    if (task.id !== selectedTask.id) { // Check if task is not the current task being edited
+    if (task.id !== selectedTask.id) {
       const option = document.createElement("option");
       option.value = task.name;
       option.textContent = task.name;
@@ -188,17 +211,20 @@ function editTask() {
       }
       taskDependencySelect.appendChild(option);
     }
-  }); 
+  });
 
   const noDependencyOption = document.createElement("option");
   noDependencyOption.value = "";
   noDependencyOption.textContent = "";
   taskDependencySelect.appendChild(noDependencyOption);
 
-// save button
+  // save button
   const saveButton = document.createElement("button");
   saveButton.textContent = "Save";
-  saveButton.addEventListener("click", saveTaskChanges);
+  saveButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    saveTaskChanges();
+  });
 
   taskElement.appendChild(taskNameInput);
   taskElement.appendChild(taskDurationInput);
@@ -208,9 +234,12 @@ function editTask() {
 
   $(taskDependencySelect).select2({
     placeholder: "Select dependencies",
-    multiple: true
+    multiple: true,
+    width: "400px",
+    height: "40px",
   });
 
+  taskElement.appendChild(errorMessage);
   taskContainer.replaceChild(taskElement, selectedTaskElement);
 }
 
@@ -219,6 +248,15 @@ function saveTaskChanges() {
   const taskName = document.getElementById("editTaskName").value;
   const taskDuration = document.getElementById("editTaskDuration").value;
   const durationUnit = document.getElementById("editDurationUnit").value;
+
+  if (
+    taskName.trim() === "" ||
+    taskDuration === "" ||
+    parseInt(taskDuration) <= 0
+  ) {
+    alert("Please enter valid task name and duration.");
+    return;
+  }
 
   const selectedDependencies = Array.from(
     document.getElementById("editTaskDependency").options
@@ -345,6 +383,10 @@ class Graph {
 
 // SORT TASKS
 function sortTasks() {
+  const errorMessage = document.getElementById("durationErrorMessage");
+  if (errorMessage.style.display === "block") {
+    return; // Prevent sorting if there's an error message
+  }
   const startTask = document.getElementById("firstTask").value;
   const endTask = document.getElementById("endTask").value;
 
@@ -356,40 +398,41 @@ function sortTasks() {
     graph.addVertex(task.name);
   });
 
-    tasks.forEach((task) => {
-        if (task.dependency.length > 0) {
-        task.dependency.forEach((dependency) => {
-            const weight = getDuration(dependency);
-            if (!tasks.some((t) => t.name === dependency)) {
-            deletedDependencies.push(dependency);
-            } else {
-            graph.addEdge(task.name, dependency, weight);
-            }
-        });
+  tasks.forEach((task) => {
+    if (task.dependency.length > 0) {
+      task.dependency.forEach((dependency) => {
+        const weight = getDuration(dependency);
+        if (!tasks.some((t) => t.name === dependency)) {
+          deletedDependencies.push(dependency);
+        } else {
+          graph.addEdge(task.name, dependency, weight);
         }
-    });
+      });
+    }
+  });
 
   if (startTask && endTask) {
     const { distances, previous } = graph.dijkstra(startTask);
     const shortestPath = graph.getPath(previous, endTask);
-    const totalDuration = distances[endTask] !== Infinity ? distances[endTask] : 0;
+    const totalDuration =
+      distances[endTask] !== Infinity ? distances[endTask] : 0;
 
     renderShortestPath(shortestPath, "sortedTasksContainer");
     updateTotalDuration(totalDuration);
 
     let totalEdgeValue = 0;
     for (let index = 1; index < shortestPath.length; index++) {
-        const currentTask = shortestPath[index];
-        const previousTask = shortestPath[index - 1];
-  
-        if (
-          graph.vertices.hasOwnProperty(currentTask) &&
-          graph.vertices[currentTask].hasOwnProperty(previousTask)
-        ) {
-          const weight = graph.vertices[currentTask][previousTask];
-          totalEdgeValue += weight;
-        }
+      const currentTask = shortestPath[index];
+      const previousTask = shortestPath[index - 1];
+
+      if (
+        graph.vertices.hasOwnProperty(currentTask) &&
+        graph.vertices[currentTask].hasOwnProperty(previousTask)
+      ) {
+        const weight = graph.vertices[currentTask][previousTask];
+        totalEdgeValue += weight;
       }
+    }
     console.log("Total Edge Value:", totalEdgeValue);
   }
 
@@ -419,7 +462,10 @@ function sortTasks() {
 
   tasks.forEach((task) => {
     task.dependency.forEach((dependency) => {
-      if (!graph.vertices.hasOwnProperty(task.name) || !graph.vertices[task.name].hasOwnProperty(dependency)) {
+      if (
+        !graph.vertices.hasOwnProperty(task.name) ||
+        !graph.vertices[task.name].hasOwnProperty(dependency)
+      ) {
         missingDependencies.push({
           task: task.name,
           dependency: dependency,
@@ -436,7 +482,6 @@ function sortTasks() {
         .join(", ");
     alert(missingDependencyMessage);
   }
-
 }
 
 // RENDER THE SHORTEST PATH TASKS IN THE CONTAINER
