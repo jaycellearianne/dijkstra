@@ -67,12 +67,12 @@ function updateDependencyDropdown() {
   taskDependencyDropdown.empty();
   
   tasks.forEach(function (task) {
-    const availableDependencies = tasks.filter(depTask => depTask.id !== task.id);
-
     const option = new Option(task.name, task.name);
+    if (selectedTask && task.name === selectedTask.name) {
+      $(option).prop("disabled", true); // Disable current task
+    }
     taskDependencyDropdown.append(option);
   });
-
   // Initialize Select2 with multi-select and other options
   taskDependencyDropdown.select2({
     placeholder: "Select dependencies",
