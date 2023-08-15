@@ -151,7 +151,7 @@ function editTask() {
   taskNameInput.value = selectedTask.name;
 
   const taskDurationInput = document.createElement("input");
-  taskDurationInput.type = "number";
+  taskDurationInput.type = "text";
   taskDurationInput.id = "editTaskDuration";
   taskDurationInput.placeholder = "Enter task duration";
   taskDurationInput.value = selectedTask.duration;
