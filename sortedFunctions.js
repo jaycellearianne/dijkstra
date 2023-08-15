@@ -345,6 +345,15 @@ function sortTasks() {
     graph.addVertex(task.name);
   });
 
+//   tasks.forEach((task) => {
+//     if (task.dependency.length > 0) {
+//       task.dependency.forEach((dependency) => {
+//         const weight = getDuration(dependency);
+//         graph.addEdge(task.name, dependency, weight);
+//       });
+//     }
+//   });
+
     tasks.forEach((task) => {
         if (task.dependency.length > 0) {
         task.dependency.forEach((dependency) => {
@@ -393,6 +402,9 @@ function sortTasks() {
     }
     return 0;
   }
+
+  // renderShortestPath(shortestPath, "sortedTasksContainer");
+  // updateTotalDuration(totalDuration);
 
   function updateTotalDuration(duration) {
     const totalDurationElement = document.getElementById("totalDuration");
